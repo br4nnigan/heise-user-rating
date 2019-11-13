@@ -1,0 +1,21 @@
+{
+  "name": "heise-user-rating",
+  "version": "1.0.0",
+  "description": "client side user rating von heise.de Nutzern",
+  "author": "admin@czxzyyyk.de",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "Static.js": "gist:b6454cf8fe004ee9f0264aa301007202"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "scripts": {
+    "webpack": "webpack",
+    "start": "http-server"
+  }
+}
