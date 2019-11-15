@@ -74,11 +74,11 @@ class App {
 		this.log("rateUser", user, rating, this.state);
 
 		if (!this.state[user]) {
-			this.state[user] = 5; // neutral rating
+			this.state[user] = 6; // neutral rating
 		}
 		this.state[user] += rating;
 		this.state[user] = Math.max(this.state[user], 1);
-		this.state[user] = Math.min(this.state[user], 10);
+		this.state[user] = Math.min(this.state[user], 11);
 
 		this.onStateChange();
 	}
