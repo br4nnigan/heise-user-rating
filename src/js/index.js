@@ -8,8 +8,11 @@ class App {
 
 		this.STORAGE_KEY = "heise-user-rating";
 		this.state = {};
-		this.userBars = null;
-		this.debug = 1;
+
+		this.userbarUsers = null;
+		this.threadlistUsers = null;
+
+		this.debug = 0;
 
 		this.initialize();
 	}
@@ -35,13 +38,26 @@ class App {
 			}
 		}
 
-		this.userBars = document.querySelectorAll(".forum_userbar--author");
+		this.userbarUsers = document.querySelectorAll(".author.userbar_list li .pseudonym, .author.userbar_list li .realname");
+		this.threadlistUsers = document.querySelectorAll("#tree_thread_list .tree_thread_list--written_by_user");
 
 		const storage = localStorage.getItem(this.STORAGE_KEY);
 		if (storage) {
 			this.state = JSON.parse(storage);
 			this.onStateChange();
 		}
+
+		this.injectCss();
+	}
+
+	injectCss() {
+		var style = document.createElement("style");
+			style.setAttribute("rel", "stylesheet");
+			style.innerHTML = `
+		.tree_thread_list--time + .tree_thread_list--written_by_user{
+			margin-right: 38px;
+		}`;
+		document.head.appendChild(style);
 	}
 
 
@@ -92,37 +108,84 @@ class App {
 		this.render();
 	}
 
+	createUserRatingElement( rating ) {
+
+		const elUserRating = document.createElement("span");
+		elUserRating.classList.add("rating");
+		elUserRating.style.display = "inline";
+
+		const elUserRatingImg = document.createElement("img");
+		elUserRatingImg.style.float = "none";
+		elUserRatingImg.style.verticalAlign = "baseline";
+		elUserRatingImg.style.marginLeft = ".5em";
+		elUserRatingImg.style.display = "inline-block";
+		elUserRatingImg.setAttribute("src", "/icons/forum/wertung_" + rating + ".gif");
+
+		if ( this.debug ) {
+			elUserRatingImg.setAttribute("src", "Vielleicht könnte man ja mal anfangen... _ Forum - heise online_files/icons/forum/wertung_4.gif");
+		}
+		elUserRating.appendChild(elUserRatingImg);
+
+		return elUserRating;
+	}
+
+	getUserRating ( userName ) {
+
+		let userRating = this.state[userName];
+
+		if ( this.debug && userName == "hgzi" ) userRating = 4;
+
+		this.log("getUserRating", userName, userRating);
+
+		return userRating;
+	}
+
 	render() {
 
 		this.log("render");
 
-		Static.each(this.userBars, elUserBar => {
-			const elUser = elUserBar.querySelector(".pseudonym");
-			if (elUser) {
+		Static.each(this.threadlistUsers, elUser => {
+		this.log("threadlistUsers");
+			const hasUserRatingElement = elUser.querySelector(".span.rating");
 
-				const userName = elUser.textContent;
-				const userRating = this.state[userName];
+			this.log("threadlistUsers hasUserRatingElement", hasUserRatingElement);
 
-				this.log("render userName && userRating", userName ,userRating);
+			if (!hasUserRatingElement) {
+				const userName = elUser.textContent.trim();
+				const userRating = this.getUserRating(userName);
 
-				if (userName && userRating) {
+				this.log("render threadlistUsers userName && userRating", userName ,userRating);
 
-					let elUserRatingImg = elUser.querySelector("rating img");
-					if (!elUserRatingImg) {
+				if (userRating) {
 
-						const elUserRating = document.createElement("li");
-							  elUserRating.classList.add("rating");
-						elUserRatingImg = document.createElement("img");
-						elUserRatingImg.style.float = "none";
-						elUserRatingImg.style.verticalAlign = "baseline";
-						elUserRatingImg.style.marginLeft = ".5em";
-						elUserRating.appendChild(elUserRatingImg);
-						elUserBar.appendChild(elUserRating);
-					}
-					elUserRatingImg.setAttribute("src", "/icons/forum/wertung_" + userRating + ".gif");
+					const elUserRating = this.createUserRatingElement(userRating);
+					elUserRating.style.float = "right";
+					this.log("render threadlistUsers elUserRating", elUserRating);
+
+					Static.dom.insertBefore(elUserRating, elUser);
 				}
 			}
 		});
+
+		Static.each(this.userbarUsers, elUser => {
+			this.log("userbarUsers");
+
+			const hasUserRatingElement = elUser.querySelector(".span.rating");
+			if (!hasUserRatingElement) {
+
+				const userName = elUser.textContent;
+				const userRating = this.getUserRating(userName);
+
+				this.log("render userbarUsers userName && userRating", userName ,userRating);
+
+				if (userRating) {
+
+					const elUserRating = this.createUserRatingElement(userRating);
+					elUser.parentNode.appendChild(elUserRating);
+				}
+			}
+		});
+
 	}
 }
 
