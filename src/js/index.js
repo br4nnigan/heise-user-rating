@@ -7,6 +7,7 @@ class App {
 		this.log("constructor");
 
 		this.STORAGE_KEY = "heise-user-rating";
+		this.CSS_CLASS = "user_rating";
 		this.state = {};
 
 		this.userbarUsers = null;
@@ -55,7 +56,7 @@ class App {
 			style.setAttribute("rel", "stylesheet");
 			style.innerHTML = `
 		.tree_thread_list--time + .tree_thread_list--written_by_user{
-			margin-right: 38px;
+			margin-right: 40px;
 		}`;
 		document.head.appendChild(style);
 	}
@@ -111,8 +112,8 @@ class App {
 	createUserRatingElement( rating ) {
 
 		const elUserRating = document.createElement("span");
-		elUserRating.classList.add("tree_thread_list--user_rating");
-		elUserRating.classList.add("tree_thread_list--rating");
+		elUserRating.classList.add(this.CSS_CLASS);
+
 		elUserRating.style.display = "inline";
 
 		const elUserRatingImg = document.createElement("img");
@@ -147,7 +148,7 @@ class App {
 
 		Static.each(this.threadlistUsers, elUser => {
 		this.log("threadlistUsers");
-			const hasUserRatingElement = elUser.querySelector(".span.rating");
+			const hasUserRatingElement = !!elUser.getElementsByClassName(this.CSS_CLASS).length;
 
 			this.log("threadlistUsers hasUserRatingElement", hasUserRatingElement);
 
@@ -160,6 +161,7 @@ class App {
 				if (userRating) {
 
 					const elUserRating = this.createUserRatingElement(userRating);
+						elUserRating.classList.add("tree_thread_list--rating"); // needed for styling of user rating in thread list
 					Static.dom.insertBefore(elUserRating, elUser);
 				}
 			}
@@ -168,7 +170,7 @@ class App {
 		Static.each(this.userbarUsers, elUser => {
 			this.log("userbarUsers");
 
-			const hasUserRatingElement = elUser.querySelector(".span.rating");
+			const hasUserRatingElement = !!elUser.getElementsByClassName(this.CSS_CLASS).length;
 			if (!hasUserRatingElement) {
 
 				const userName = elUser.textContent;
