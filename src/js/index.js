@@ -111,7 +111,8 @@ class App {
 	createUserRatingElement( rating ) {
 
 		const elUserRating = document.createElement("span");
-		elUserRating.classList.add("rating");
+		elUserRating.classList.add("tree_thread_list--user_rating");
+		elUserRating.classList.add("tree_thread_list--rating");
 		elUserRating.style.display = "inline";
 
 		const elUserRatingImg = document.createElement("img");
@@ -159,9 +160,6 @@ class App {
 				if (userRating) {
 
 					const elUserRating = this.createUserRatingElement(userRating);
-					elUserRating.style.float = "right";
-					this.log("render threadlistUsers elUserRating", elUserRating);
-
 					Static.dom.insertBefore(elUserRating, elUser);
 				}
 			}
